@@ -4,7 +4,7 @@
 
 (asdf:defsystem #:cl-data-availability-sampling
   :description "Data Availability Sampling with 2D Reed-Solomon erasure codes"
-  :author "CLPIC Project"
+  :author "Parkian Company LLC"
   :license "MIT"
   :version "1.0.0"
   :serial t
