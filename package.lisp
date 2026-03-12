@@ -156,4 +156,5 @@ Usage Example:
    #:sha256
    #:bytes-to-integer
    #:integer-to-bytes
-   #:compute-merkle-root))
+   #:compute-merkle-root
+   #:mod-exp))
