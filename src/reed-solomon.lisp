@@ -150,6 +150,16 @@ Returns:
 ;;; REED-SOLOMON ENCODING/DECODING
 ;;; ============================================================================
 
+(defun element-to-integer (element)
+  "Convert a data element to an integer for field arithmetic."
+  (cond ((integerp element) element)
+        ((null element) 0)
+        ((typep element '(vector (unsigned-byte 8)))
+         (bytes-to-integer element))
+        ((vectorp element)
+         (bytes-to-integer (coerce element '(vector (unsigned-byte 8)))))
+        (t 0)))
+
 (defun reed-solomon-encode (data-vector target-length)
   "Encode data using Reed-Solomon code to target length.
 
@@ -162,8 +172,13 @@ Arguments:
 Returns:
   Extended data vector"
   (let* ((n (length data-vector))
-         (coefficients (fft-inverse data-vector))
+         ;; Convert elements to integers for field arithmetic
+         (int-data (make-array n))
+         (_ (dotimes (i n)
+              (setf (aref int-data i) (element-to-integer (aref data-vector i)))))
+         (coefficients (fft-inverse int-data))
          (result (make-array target-length)))
+    (declare (ignore _))
     ;; Evaluate polynomial at all target points
     (dotimes (i target-length result)
       (if (< i n)
@@ -271,12 +286,26 @@ Returns:
         (setf (aref commitments col)
               (compute-commitment col-data))))))
 
+(defun element-to-bytes (element)
+  "Convert a data element to a byte array."
+  (cond ((null element)
+         (make-array +field-element-bytes+ :element-type '(unsigned-byte 8)
+                                           :initial-element 0))
+        ((integerp element)
+         (integer-to-bytes element +field-element-bytes+))
+        ((typep element '(simple-array (unsigned-byte 8) (*)))
+         element)
+        ((vectorp element)
+         (coerce element '(simple-array (unsigned-byte 8) (*))))
+        (t (make-array +field-element-bytes+ :element-type '(unsigned-byte 8)
+                                             :initial-element 0))))
+
 (defun compute-commitment (data)
   "Compute a commitment to data (simplified hash-based commitment)."
   (sha256 (if (vectorp data)
               (apply #'concatenate '(vector (unsigned-byte 8))
-                     (coerce (map 'list #'identity data) 'list))
-              data)))
+                     (map 'list #'element-to-bytes data))
+              (element-to-bytes data))))
 
 ;;; ============================================================================
 ;;; COUNTING HELPERS

@@ -185,8 +185,9 @@ Returns:
          (sample-data (aref data row col))
          (row-commitment (aref (extended-matrix-row-commitments matrix) row))
          ;; Generate proof (simplified - hash-based in this implementation)
+         (sample-bytes (element-to-bytes sample-data))
          (proof (sha256 (concatenate '(vector (unsigned-byte 8))
-                                     (or sample-data #())
+                                     sample-bytes
                                      (integer-to-bytes row 4)
                                      (integer-to-bytes col 4)))))
     (make-das-sample

@@ -157,4 +157,10 @@ Usage Example:
    #:bytes-to-integer
    #:integer-to-bytes
    #:compute-merkle-root
-   #:mod-exp))
+   #:mod-exp
+
+   ;; Matrix Helpers
+   #:extract-row
+   #:extract-column
+   #:count-available-in-row
+   #:count-available-in-column))
