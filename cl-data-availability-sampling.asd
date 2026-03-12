@@ -30,4 +30,6 @@
     :components
     ((:file "test-das"))))
   :perform (test-op (o c)
-             (uiop:symbol-call :cl-data-availability-sampling/test :run-tests)))
+             (let ((result (uiop:symbol-call :cl-data-availability-sampling/test :run-tests)))
+               (unless result
+                 (error "Tests failed")))))
