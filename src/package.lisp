@@ -46,6 +46,8 @@ Usage Example:
               available-p confidence)))")
 
   (:export
+   #:matrix-multiply
+   #:soft-max
    #:sigmoid
    #:relu
    #:dot-product

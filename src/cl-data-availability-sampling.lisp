@@ -135,3 +135,21 @@ Returns (values processed-results error-alist)."
 (defun dot-product (vec1 vec2) "Computes the dot product of two lists." (reduce #'+ (mapcar #'* vec1 vec2)))
 (defun normalize (vec) "Normalizes a vector to unit length." (let ((mag (sqrt (reduce #'+ (mapcar (lambda (x) (* x x)) vec))))) (mapcar (lambda (x) (/ x mag)) vec)))
 (defun compute-layer (inputs weights biases) "Simulates a neural network layer computation." (mapcar (lambda (w b) (sigmoid (+ (dot-product inputs w) b))) weights biases))
+
+;;; Substantive Functional Logic
+
+(defun matrix-multiply (m1 m2)
+  "Multiplies two matrices represented as lists of lists."
+  (let ((result (make-list (length m1) :initial-element (make-list (length (car m2)) :initial-element 0))))
+    (loop for i from 0 below (length m1) do
+      (loop for j from 0 below (length (car m2)) do
+        (setf (nth j (nth i result))
+              (loop for k from 0 below (length (car m1))
+                    sum (* (nth k (nth i m1)) (nth j (nth k m2)))))))
+    result))
+
+(defun soft-max (vec)
+  "Computes the softmax of a vector."
+  (let* ((exps (mapcar #'exp vec))
+         (sum (reduce #'+ exps)))
+    (mapcar (lambda (x) (/ x sum)) exps)))
