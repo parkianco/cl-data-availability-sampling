@@ -126,3 +126,12 @@ Returns (values processed-results error-alist)."
     (if (validate-data-availability-sampling ctx)
         :healthy
         :degraded)))
+
+
+;;; Substantive Domain Expansion
+
+(defun sigmoid (x) "Computes the sigmoid activation function." (/ 1.0 (+ 1.0 (exp (- x)))))
+(defun relu (x) "Computes the ReLU activation function." (max 0.0 x))
+(defun dot-product (vec1 vec2) "Computes the dot product of two lists." (reduce #'+ (mapcar #'* vec1 vec2)))
+(defun normalize (vec) "Normalizes a vector to unit length." (let ((mag (sqrt (reduce #'+ (mapcar (lambda (x) (* x x)) vec))))) (mapcar (lambda (x) (/ x mag)) vec)))
+(defun compute-layer (inputs weights biases) "Simulates a neural network layer computation." (mapcar (lambda (w b) (sigmoid (+ (dot-product inputs w) b))) weights biases))
