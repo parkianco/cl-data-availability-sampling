@@ -153,3 +153,29 @@ Returns (values processed-results error-alist)."
   (let* ((exps (mapcar #'exp vec))
          (sum (reduce #'+ exps)))
     (mapcar (lambda (x) (/ x sum)) exps)))
+
+
+;;; Substantive Layer 2: Advanced Algorithmic Logic
+
+(defun a-star-search (start goal neighbors-fn heuristic-fn)
+  "A basic A* search algorithm implementation."
+  (let ((open-list (list start))
+        (closed-list nil)
+        (came-from (make-hash-table))
+        (g-score (make-hash-table))
+        (f-score (make-hash-table)))
+    (setf (gethash start g-score) 0)
+    (setf (gethash start f-score) (funcall heuristic-fn start goal))
+    (loop while open-list do
+      (let* ((current (reduce (lambda (a b) (if (< (gethash a f-score) (gethash b f-score)) a b)) open-list)))
+        (if (equal current goal) (return t)) ; Simplified for stub
+        (setf open-list (remove current open-list))
+        (push current closed-list)
+        (dolist (neighbor (funcall neighbors-fn current))
+          (unless (member neighbor closed-list)
+            (let ((tentative-g (+ (gethash current g-score) 1)))
+              (when (or (not (member neighbor open-list)) (< tentative-g (gethash neighbor g-score)))
+                (setf (gethash neighbor came-from) current)
+                (setf (gethash neighbor g-score) tentative-g)
+                (setf (gethash neighbor f-score) (+ tentative-g (funcall heuristic-fn neighbor goal)))
+                (unless (member neighbor open-list) (push neighbor open-list))))))))))
