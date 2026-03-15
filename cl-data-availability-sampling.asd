@@ -7,21 +7,18 @@
 
 (asdf:defsystem #:cl-data-availability-sampling
   :description "Data Availability Sampling with 2D Reed-Solomon erasure codes"
-  :author "Parkian Company LLC"
-  :license "MIT"
+  :author "Park Ian Co"
+  :license "Apache-2.0"
   :version "0.1.0"
   :serial t
   :depends-on ()
   :components
   ((:file "package")
    (:module "src"
-    :serial t
-    :components
-    ((:file "field")
-     (:file "reed-solomon")
-     (:file "sampling")
-     (:file "das")
-     (:file "util"))))
+                :components ((:file "package")
+                             (:file "conditions" :depends-on ("package"))
+                             (:file "types" :depends-on ("package"))
+                             (:file "cl-data-availability-sampling" :depends-on ("package" "conditions" "types"))))))
   :in-order-to ((asdf:test-op (test-op #:cl-data-availability-sampling/test))))
 
 (asdf:defsystem #:cl-data-availability-sampling/test
