@@ -91,3 +91,38 @@
 (defun extract-column (&rest args) "Auto-generated substantive API for extract-column" (declare (ignore args)) t)
 (defun count-available-in-row (&rest args) "Auto-generated substantive API for count-available-in-row" (declare (ignore args)) t)
 (defun count-available-in-column (&rest args) "Auto-generated substantive API for count-available-in-column" (declare (ignore args)) t)
+
+
+;;; ============================================================================
+;;; Standard Toolkit for cl-data-availability-sampling
+;;; ============================================================================
+
+(defmacro with-data-availability-sampling-timing (&body body)
+  "Executes BODY and logs the execution time specific to cl-data-availability-sampling."
+  (let ((start (gensym))
+        (end (gensym)))
+    `(let ((,start (get-internal-real-time)))
+       (multiple-value-prog1
+           (progn ,@body)
+         (let ((,end (get-internal-real-time)))
+           (format t "~&[cl-data-availability-sampling] Execution time: ~A ms~%"
+                   (/ (* (- ,end ,start) 1000.0) internal-time-units-per-second)))))))
+
+(defun data-availability-sampling-batch-process (items processor-fn)
+  "Applies PROCESSOR-FN to each item in ITEMS, handling errors resiliently.
+Returns (values processed-results error-alist)."
+  (let ((results nil)
+        (errors nil))
+    (dolist (item items)
+      (handler-case
+          (push (funcall processor-fn item) results)
+        (error (e)
+          (push (cons item e) errors))))
+    (values (nreverse results) (nreverse errors))))
+
+(defun data-availability-sampling-health-check ()
+  "Performs a basic health check for the cl-data-availability-sampling module."
+  (let ((ctx (initialize-data-availability-sampling)))
+    (if (validate-data-availability-sampling ctx)
+        :healthy
+        :degraded)))

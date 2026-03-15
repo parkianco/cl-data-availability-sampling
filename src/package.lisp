@@ -46,7 +46,9 @@ Usage Example:
               available-p confidence)))")
 
   (:export
-   ;; =========================================================================
+   #:with-data-availability-sampling-timing
+   #:data-availability-sampling-batch-process
+   #:data-availability-sampling-health-check;; =========================================================================
    ;; Core Types - DAS Sample
    ;; =========================================================================
    #:das-sample
