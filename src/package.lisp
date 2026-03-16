@@ -46,6 +46,9 @@ Usage Example:
               available-p confidence)))")
 
   (:export
+   #:data-availability-sampling-execute
+   #:initialize-data-availability-sampling
+   #:data-availability-sampling-context
    #:a-star-search
    #:matrix-multiply
    #:soft-max
